@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.BusCentralMap"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <fragment xmlns:map="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical"
+        class="com.google.android.gms.maps.SupportMapFragment"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="27dp"
+        android:layout_gravity="center_horizontal|top"
+        android:gravity="center_horizontal|top"
+        android:background="@drawable/headerbg"
+        android:alpha=".88"
+        android:id="@+id/headingBarLayout"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="BusCentral"
+            android:id="@+id/textView2"
+            android:textColor="#ffffff"
+            android:typeface="sans"
+            android:alpha=".9"
+            android:focusableInTouchMode="false"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="25dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/SocketConnectedImage"
+        android:layout_gravity="left|top"
+        android:focusable="false"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="29dp"
+        android:alpha=".55" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/SocketConnectedText"
+        android:layout_marginLeft="33dp"
+        android:layout_marginTop="34dp"
+        android:shadowColor="#dcdcdc"
+        android:textColor="#232323"
+        android:alpha=".45"
+        android:allowUndo="true"
+        android:textSize="12sp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:baselineAligned="false"
+        android:clickable="false"
+        android:background="#b41f1f1f"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal|bottom">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="About"
+            android:id="@+id/AboutButton"
+            android:alpha=".8" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Donate"
+            android:id="@+id/DonateButton"
+            android:allowUndo="false"
+            android:alpha=".8" />
+    </LinearLayout>
+
+</FrameLayout>
