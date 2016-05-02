@@ -1,6 +1,6 @@
 package com.patrickmurphywebdesign.testsockets.model;
 
-import com.patrickmurphywebdesign.testsockets.RouteProperties;
+import com.patrickmurphywebdesign.testsockets.controller.RouteProperties;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -36,6 +36,7 @@ public class BusStopSchedule {
         boolean isSunday = cal.get(Calendar.DAY_OF_WEEK) == 1;
         // is it a weekend
         boolean isWeekend = isSaturday || isSunday;
+
 
         int[] endTime = new int[2];
         endTime[0] = (ccRoute.get(RouteProperties.BUS_END_HOUR));

@@ -1,4 +1,4 @@
-package com.patrickmurphywebdesign.testsockets;
+package com.patrickmurphywebdesign.testsockets.controller;
 
 import android.app.Activity;
 import android.graphics.Bitmap;

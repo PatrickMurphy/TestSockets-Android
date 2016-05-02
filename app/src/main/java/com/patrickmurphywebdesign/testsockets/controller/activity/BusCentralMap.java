@@ -1,4 +1,4 @@
-package com.patrickmurphywebdesign.testsockets.view;
+package com.patrickmurphywebdesign.testsockets.controller.activity;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -27,9 +27,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.patrickmurphywebdesign.testsockets.model.BusStop;
-import com.patrickmurphywebdesign.testsockets.MapIcons;
+import com.patrickmurphywebdesign.testsockets.controller.MapIcons;
 import com.patrickmurphywebdesign.testsockets.R;
-import com.patrickmurphywebdesign.testsockets.RouteProperties;
+import com.patrickmurphywebdesign.testsockets.controller.RouteProperties;
 
 import org.json.JSONObject;
 
@@ -77,6 +77,7 @@ public class BusCentralMap extends FragmentActivity implements OnMapReadyCallbac
             System.out.println("attempting to reconnect to socket io");
         }
     };
+
 
     private Socket mSocket;
     {

@@ -1,4 +1,4 @@
-package com.patrickmurphywebdesign.testsockets;
+package com.patrickmurphywebdesign.testsockets.controller;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.patrickmurphywebdesign.testsockets.model.BusStop;

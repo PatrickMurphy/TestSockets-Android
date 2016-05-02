@@ -1,4 +1,4 @@
-package com.patrickmurphywebdesign.testsockets.view;
+package com.patrickmurphywebdesign.testsockets.controller.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.patrickmurphywebdesign.testsockets.R;
-import com.patrickmurphywebdesign.testsockets.RouteProperties;
+import com.patrickmurphywebdesign.testsockets.controller.RouteProperties;
 
 public class BusStopDetailFragment extends Fragment {
     /**

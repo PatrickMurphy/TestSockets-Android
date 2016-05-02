@@ -1,4 +1,4 @@
-package com.patrickmurphywebdesign.testsockets.view;
+package com.patrickmurphywebdesign.testsockets.controller.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

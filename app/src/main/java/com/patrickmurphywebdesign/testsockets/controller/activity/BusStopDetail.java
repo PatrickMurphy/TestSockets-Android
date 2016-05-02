@@ -1,6 +1,9 @@
-package com.patrickmurphywebdesign.testsockets.view;
+package com.patrickmurphywebdesign.testsockets.controller.activity;
 
+import android.graphics.Color;
+import android.provider.CalendarContract;
 import android.support.design.widget.TabLayout;
+import android.support.v4.widget.Space;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -10,6 +13,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -89,12 +93,63 @@ public class BusStopDetail extends AppCompatActivity {
                     break;
                 case 2:
                     //return "Schedule";
+
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    LinearLayout.LayoutParams layoutParams_left_10 = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    LinearLayout.LayoutParams layoutParams_left_25 = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    layoutParams_left_10.setMargins(10,0,0,0);
+                    layoutParams_left_25.setMargins(5,0,0,0);
+                    layoutParams.setMargins(0,6,0,6);
                     LinearLayout ll = (LinearLayout) rootView.findViewById(R.id.scheduleContainer);
+                    int stopCount = 0;
 
                     for(StopTime st : bss.getStops()){
-                        TextView tv = new TextView(rootView.getContext());
-                        tv.setText(st.toString());
-                        ll.addView(tv);
+                        LinearLayout TempLL = new LinearLayout(rootView.getContext());
+                        TempLL.setPadding(6,6,6,6);
+                        if((stopCount++)%2 == 1){
+                            TempLL.setBackgroundColor(Color.rgb(245,245,245));
+                        }
+                        TempLL.setOrientation(LinearLayout.HORIZONTAL);
+
+                        LinearLayout innerTempLL = new LinearLayout(rootView.getContext());
+                        innerTempLL.setOrientation(LinearLayout.VERTICAL);
+
+                        // text for exact time of stop
+                        TextView tv2 = new TextView(rootView.getContext());
+                        tv2.setText(st.getFormattedTime());
+                        tv2.setTextColor(Color.DKGRAY);
+                        tv2.setTextSize(14);
+
+                        // text for clock or counter clock
+                        TextView tv3 = new TextView(rootView.getContext());
+                        tv3.setText(st.getDirection());
+                        tv3.setTextColor(Color.LTGRAY);
+
+                        innerTempLL.addView(tv2);
+                        innerTempLL.addView(tv3);
+
+                        // image for cylce
+                        ImageView iv = new ImageView(rootView.getContext());
+                        if(st.isCC()) {
+                            iv.setImageResource(R.drawable.cc);
+                        }else{
+                            iv.setImageResource(R.drawable.cw);
+                        }
+                        TempLL.addView(iv);
+                        TempLL.addView(innerTempLL);
+
+                        // relative tiem
+                        TextView tv4 = new TextView(rootView.getContext());
+                        tv4.setText(st.getFormattedTime());
+                        tv4.setTextColor(Color.rgb(196,97,0));
+                        tv4.setTextSize(22);
+
+                        TempLL.addView(tv4);
+
+                        ll.addView(TempLL, layoutParams);
                     }
                     break;
                 //case 3:

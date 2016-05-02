@@ -1,10 +1,8 @@
-package com.patrickmurphywebdesign.testsockets.view;
+package com.patrickmurphywebdesign.testsockets.controller.activity;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-
-import com.patrickmurphywebdesign.testsockets.view.BusStopDetailFragment;
 
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 

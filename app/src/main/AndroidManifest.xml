@@ -18,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".view.BusCentralMap"
+            android:name=".controller.activity.BusCentralMap"
             android:label="Bus Central"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -40,15 +40,15 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".view.BusStopDetail"
+            android:name=".controller.activity.BusStopDetail"
             android:label="@string/title_activity_bus_stop_detail"
-            android:parentActivityName=".view.BusCentralMap"
+            android:parentActivityName=".controller.activity.BusCentralMap"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.BusCentralMap" />
+                android:value=".controller.activity.BusCentralMap" />
         </activity>
-        <activity android:name=".view.About"></activity>
+        <activity android:name=".controller.activity.About"></activity>
     </application>
 
 </manifest>

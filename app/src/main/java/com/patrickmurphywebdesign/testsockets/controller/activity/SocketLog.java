@@ -1,4 +1,4 @@
-package com.patrickmurphywebdesign.testsockets.view;
+package com.patrickmurphywebdesign.testsockets.controller.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;

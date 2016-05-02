@@ -1,10 +1,8 @@
 package com.patrickmurphywebdesign.testsockets.model;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.internal.zzf;
-import com.patrickmurphywebdesign.testsockets.MapIcons;
+import com.patrickmurphywebdesign.testsockets.controller.MapIcons;
 
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -18,6 +18,24 @@ public class StopTime {
         return isCC;
     }
 
+    public String getAMPM(){
+        if(hour>=12)
+            return "PM";
+        else
+            return "AM";
+    }
+
+    public String getFormattedTime(){
+        return getHour() + ":" + getMinute() +" "+ getAMPM();
+    }
+
+    public String getDirection(){
+        if(isCC)
+            return "Counter Clockwise";
+        else
+            return "Clockwise";
+    }
+
     public int get24Hour() {
         return hour;
     }
@@ -27,7 +45,10 @@ public class StopTime {
     }
 
     public int getHour(){
-        return hour%12;
+        if(hour == 12 || hour == 0)
+            return 12;
+        else
+            return hour%12;
     }
 
     public String toString(){
