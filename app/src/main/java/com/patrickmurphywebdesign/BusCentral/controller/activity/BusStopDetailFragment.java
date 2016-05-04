@@ -1,4 +1,4 @@
-package com.patrickmurphywebdesign.testsockets.controller.activity;
+package com.patrickmurphywebdesign.BusCentral.controller.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,8 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.patrickmurphywebdesign.testsockets.R;
-import com.patrickmurphywebdesign.testsockets.controller.RouteProperties;
+import com.patrickmurphywebdesign.BusCentral.R;
+import com.patrickmurphywebdesign.BusCentral.controller.RouteProperties;
 
 public class BusStopDetailFragment extends Fragment {
     /**
@@ -39,12 +39,12 @@ public class BusStopDetailFragment extends Fragment {
 
         switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
             case 1:
-                //return "Details";
-                rootView = inflater.inflate(R.layout.fragment_bus_stop_detail_details, container, false);
-                break;
-            case 2:
                 //return "Schedule";
                 rootView = inflater.inflate(R.layout.fragment_bus_stop_detail_schedule, container, false);
+                break;
+            case 2:
+                //return "Details";
+                rootView = inflater.inflate(R.layout.fragment_bus_stop_detail_details, container, false);
                 break;
             //case 3:
                 //return "Nearby";

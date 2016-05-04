@@ -1,4 +1,4 @@
-package com.patrickmurphywebdesign.testsockets.controller.activity;
+package com.patrickmurphywebdesign.BusCentral.controller.activity;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -27,9 +27,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "Details";
-            case 1:
                 return "Schedule";
+            case 1:
+                return "Details";
             //case 2:
             //    return "Nearby";
         }

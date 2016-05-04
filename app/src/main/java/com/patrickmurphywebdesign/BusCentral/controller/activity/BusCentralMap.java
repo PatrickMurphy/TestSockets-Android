@@ -1,15 +1,19 @@
-package com.patrickmurphywebdesign.testsockets.controller.activity;
+package com.patrickmurphywebdesign.BusCentral.controller.activity;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +22,9 @@ import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Manager;
 import com.github.nkzawa.socketio.client.Socket;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -26,14 +33,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.patrickmurphywebdesign.testsockets.model.BusStop;
-import com.patrickmurphywebdesign.testsockets.controller.MapIcons;
-import com.patrickmurphywebdesign.testsockets.R;
-import com.patrickmurphywebdesign.testsockets.controller.RouteProperties;
+import com.patrickmurphywebdesign.BusCentral.model.BusStop;
+import com.patrickmurphywebdesign.BusCentral.controller.MapIcons;
+import com.patrickmurphywebdesign.BusCentral.R;
+import com.patrickmurphywebdesign.BusCentral.controller.RouteProperties;
+import com.patrickmurphywebdesign.BusCentral.model.BusStopSchedule;
 
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -43,8 +52,10 @@ public class BusCentralMap extends FragmentActivity implements OnMapReadyCallbac
     private ArrayList<Marker> busCollection;
     private ArrayList<Integer> busIDs;
     private HashMap<Integer, Marker> busCollectionMap;
+    private HashMap<String, Marker> stopCollection;
     private RouteProperties routeProperties;
     private MapIcons mapIcons;
+    private int busUpdateCount;
 
     private Emitter.Listener onConnected = new Emitter.Listener() {
         @Override
@@ -100,6 +111,7 @@ public class BusCentralMap extends FragmentActivity implements OnMapReadyCallbac
             BusCentralMap.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    busUpdateCount++;
                     JSONObject data = (JSONObject) args[0];
 
                     try {
@@ -135,6 +147,12 @@ public class BusCentralMap extends FragmentActivity implements OnMapReadyCallbac
                                 }
                             }
 
+                        }
+                        if(busUpdateCount % 5 == 0){
+                            for(BusStop bs : routeProperties.getStops()){
+                                BusStopSchedule tempBusStopSchedule = new BusStopSchedule(bs);
+                                stopCollection.get(bs.getName()).setSnippet("Next stop: "+tempBusStopSchedule.getNextTime().getFormattedTime()+" Click for Full Schedule.");
+                            }
                         }
                     } catch (Exception e) {
                         //    return;
@@ -200,36 +218,6 @@ public class BusCentralMap extends FragmentActivity implements OnMapReadyCallbac
 
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_bus_central_map_overlay);
-
-        setConnectionStatusIndicator(false, true);
-
-        routeProperties = new RouteProperties();
-        mapIcons = new MapIcons(this);
-        busCollection = new ArrayList<Marker>();
-        busCollectionMap = new HashMap<>();
-        busIDs = new ArrayList<Integer>();
-
-        if(routeProperties.isWeekend()){
-            // alert about only one bus route and modified times
-            //this.alertWindow("It is a weekend!");
-        }
-
-        // if no buses running
-        if(!routeProperties.isBusesActive()){
-            this.alertWindow("No buses are currently running.");
-        }
-
-        checkConnectivity();
-
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-    }
 
     private void alertWindow(String Message){
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
@@ -256,6 +244,50 @@ public class BusCentralMap extends FragmentActivity implements OnMapReadyCallbac
         alert11.show();
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_bus_central_map_overlay);
+
+        routeProperties = new RouteProperties();
+        mapIcons = new MapIcons(this);
+        busCollection = new ArrayList<Marker>();
+        busCollectionMap = new HashMap<>();
+        stopCollection = new HashMap<>();
+        busIDs = new ArrayList<Integer>();
+
+        setConnectionStatusIndicator(false, true);
+
+        if(routeProperties.isWeekend()){
+            // alert about only one bus route and modified times
+            //this.alertWindow("It is a weekend!");
+        }
+
+        // if no buses running
+        if(!routeProperties.isBusesActive()){
+            this.alertWindow("No buses are currently running.");
+        }
+
+        ImageButton aboutButton = (ImageButton) findViewById(R.id.aboutButton);
+        aboutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    Intent intent = new Intent(BusCentralMap.this, About.class);
+                    startActivity(intent);
+                }catch (Exception e) {
+                    System.out.println("MyActivity::MyMethod" + e.getMessage());
+                }
+            }
+        });
+
+        checkConnectivity();
+
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+    }
     @Override
     protected void onRestart() {
         super.onRestart();
@@ -291,6 +323,7 @@ public class BusCentralMap extends FragmentActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         // setup map
+        busUpdateCount = 0;
         mMap = googleMap;
         mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.getUiSettings().setIndoorLevelPickerEnabled(false);
@@ -306,11 +339,14 @@ public class BusCentralMap extends FragmentActivity implements OnMapReadyCallbac
 
         // add stops
         for(BusStop stop : routeProperties.getStops()){
-            Marker tempM = mMap.addMarker(new MarkerOptions().position(stop.getPosition()).title(stop.getName()).snippet("Click for details.").draggable(false).icon(mapIcons.getIcon_stop_half()).anchor(Float.parseFloat("0.5"), Float.parseFloat("0.5")));
+            BusStopSchedule bss = new BusStopSchedule(stop);
+            Marker tempM = mMap.addMarker(new MarkerOptions().position(stop.getPosition()).title(stop.getName()).snippet("Next stop: "+bss.getNextTime().getFormattedTime()+" Click for Full Schedule.").draggable(false).icon(mapIcons.getIcon_stop_half()).anchor(Float.parseFloat("0.5"), Float.parseFloat("0.5")));
 
             if(stop.getIsTimed()){
                 tempM.setIcon(mapIcons.getIcon_stop_threeFourths());
             }
+
+            stopCollection.put(stop.getName(), tempM);
         }
 
         // add marker window click listener

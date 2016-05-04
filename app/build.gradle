@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.patrickmurphywebdesign.testsockets"
+        applicationId "com.patrickmurphywebdesign.BusCentral"
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 1

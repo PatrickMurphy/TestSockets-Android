@@ -1,4 +1,4 @@
-package com.patrickmurphywebdesign.testsockets.controller;
+package com.patrickmurphywebdesign.BusCentral.controller;
 
 import android.app.Activity;
 import android.graphics.Bitmap;

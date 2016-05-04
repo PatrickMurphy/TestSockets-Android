@@ -1,4 +1,4 @@
-package com.patrickmurphywebdesign.testsockets;
+package com.patrickmurphywebdesign.BusCentral;
 
 import org.junit.Test;
 

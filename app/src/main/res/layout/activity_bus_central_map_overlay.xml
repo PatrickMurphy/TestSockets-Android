@@ -43,7 +43,6 @@
         android:layout_gravity="left|top"
         android:focusable="false"
         android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="29dp"
         android:alpha=".55" />
@@ -61,30 +60,17 @@
         android:allowUndo="true"
         android:textSize="12sp" />
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:baselineAligned="false"
-        android:clickable="false"
-        android:background="#b41f1f1f"
-        android:gravity="center"
-        android:layout_gravity="center_horizontal|bottom">
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="About"
-            android:id="@+id/AboutButton"
-            android:alpha=".8" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Donate"
-            android:id="@+id/DonateButton"
-            android:allowUndo="false"
-            android:alpha=".8" />
-    </LinearLayout>
+    <ImageButton
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:id="@+id/aboutButton"
+        android:layout_gravity="bottom|right"
+        android:layout_marginRight="10dp"
+        android:src="@drawable/help"
+        android:scaleType="fitXY"
+        android:nestedScrollingEnabled="true"
+        android:background="#00ffffff"
+        android:layout_marginBottom="12dp"
+        android:alpha=".8" />
 
 </FrameLayout>

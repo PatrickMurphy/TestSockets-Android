@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.patrickmurphywebdesign.testsockets">
+    package="com.patrickmurphywebdesign.BusCentral">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -46,9 +47,11 @@
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".controller.activity.BusCentralMap" />
+                android:value="com.patrickmurphywebdesign.BusCentral.controller.activity.BusCentralMap" />
         </activity>
-        <activity android:name=".controller.activity.About"></activity>
+        <activity android:name=".controller.activity.About"
+            android:theme="@style/AlertDialogCustom" />
+        <activity android:name=".controller.activity.BusDetail"></activity>
     </application>
 
 </manifest>

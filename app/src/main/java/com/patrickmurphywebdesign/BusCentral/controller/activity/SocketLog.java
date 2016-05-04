@@ -1,4 +1,4 @@
-package com.patrickmurphywebdesign.testsockets.controller.activity;
+package com.patrickmurphywebdesign.BusCentral.controller.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,7 +12,7 @@ import java.net.URISyntaxException;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import com.github.nkzawa.emitter.Emitter;
-import com.patrickmurphywebdesign.testsockets.R;
+import com.patrickmurphywebdesign.BusCentral.R;
 
 import org.json.*;
 

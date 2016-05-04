@@ -1,7 +1,7 @@
-package com.patrickmurphywebdesign.testsockets.controller;
+package com.patrickmurphywebdesign.BusCentral.controller;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.patrickmurphywebdesign.testsockets.model.BusStop;
+import com.patrickmurphywebdesign.BusCentral.model.BusStop;
 
 import java.util.ArrayList;
 import java.util.Calendar;

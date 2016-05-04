@@ -1,6 +1,6 @@
-package com.patrickmurphywebdesign.testsockets.model;
+package com.patrickmurphywebdesign.BusCentral.model;
 
-import com.patrickmurphywebdesign.testsockets.controller.RouteProperties;
+import com.patrickmurphywebdesign.BusCentral.controller.RouteProperties;
 
 import java.util.Calendar;
 import java.util.Date;
