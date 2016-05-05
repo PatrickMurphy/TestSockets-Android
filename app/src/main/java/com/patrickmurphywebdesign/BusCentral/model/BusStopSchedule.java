@@ -83,6 +83,10 @@ public class BusStopSchedule {
         return cwRoute;
     }
 
+    public boolean hasNextTime(){
+        return stops.size() > 0;
+    }
+
     public StopTime getNextTime(){
         return stops.peek();
     }

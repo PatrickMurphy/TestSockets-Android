@@ -38,6 +38,7 @@ import com.patrickmurphywebdesign.BusCentral.controller.MapIcons;
 import com.patrickmurphywebdesign.BusCentral.R;
 import com.patrickmurphywebdesign.BusCentral.controller.RouteProperties;
 import com.patrickmurphywebdesign.BusCentral.model.BusStopSchedule;
+import com.patrickmurphywebdesign.BusCentral.model.StopTime;
 
 import org.json.JSONObject;
 
@@ -112,9 +113,8 @@ public class BusCentralMap extends FragmentActivity implements OnMapReadyCallbac
                 @Override
                 public void run() {
                     busUpdateCount++;
-                    JSONObject data = (JSONObject) args[0];
-
                     try {
+                        JSONObject data = (JSONObject) args[0];
                         // for each bus
                         for (int i = 0; i < data.length(); i++) {
                             // get new position etc
@@ -151,6 +151,17 @@ public class BusCentralMap extends FragmentActivity implements OnMapReadyCallbac
                         if(busUpdateCount % 5 == 0){
                             for(BusStop bs : routeProperties.getStops()){
                                 BusStopSchedule tempBusStopSchedule = new BusStopSchedule(bs);
+                                String snippetText;
+
+                                if(bs.getIsTimed()) {
+                                    if (tempBusStopSchedule.hasNextTime()) {
+                                        snippetText = "Next stop: " + tempBusStopSchedule.getNextTime().getFormattedTime() + " Click for Full Schedule.";
+                                    } else {
+                                        snippetText = "";
+                                    }
+                                }else{
+                                    snippetText = "Click for details";
+                                }
                                 stopCollection.get(bs.getName()).setSnippet("Next stop: "+tempBusStopSchedule.getNextTime().getFormattedTime()+" Click for Full Schedule.");
                             }
                         }
@@ -217,7 +228,6 @@ public class BusCentralMap extends FragmentActivity implements OnMapReadyCallbac
         }
 
     }
-
 
     private void alertWindow(String Message){
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
@@ -340,7 +350,19 @@ public class BusCentralMap extends FragmentActivity implements OnMapReadyCallbac
         // add stops
         for(BusStop stop : routeProperties.getStops()){
             BusStopSchedule bss = new BusStopSchedule(stop);
-            Marker tempM = mMap.addMarker(new MarkerOptions().position(stop.getPosition()).title(stop.getName()).snippet("Next stop: "+bss.getNextTime().getFormattedTime()+" Click for Full Schedule.").draggable(false).icon(mapIcons.getIcon_stop_half()).anchor(Float.parseFloat("0.5"), Float.parseFloat("0.5")));
+
+            String snippetText;
+
+            if(stop.getIsTimed()) {
+                if (bss.hasNextTime()) {
+                    snippetText = "Next stop: " + bss.getNextTime().getFormattedTime() + " Click for Full Schedule.";
+                } else {
+                    snippetText = "";
+                }
+            }else{
+                snippetText = "Click for details";
+            }
+            Marker tempM = mMap.addMarker(new MarkerOptions().position(stop.getPosition()).title(stop.getName()).snippet(snippetText).draggable(false).icon(mapIcons.getIcon_stop_half()).anchor(Float.parseFloat("0.5"), Float.parseFloat("0.5")));
 
             if(stop.getIsTimed()){
                 tempM.setIcon(mapIcons.getIcon_stop_threeFourths());

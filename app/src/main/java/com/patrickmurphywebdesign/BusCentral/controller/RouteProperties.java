@@ -181,6 +181,11 @@ public class RouteProperties {
         ccBusRoute.put(BUS_WEEKEND_END_HOUR, 20);
         ccBusRoute.put(BUS_WEEKEND_END_MIN, 15);
 
+        isBusesActive();
+        // logic for if is running
+    }
+
+    public boolean isBusesActive() {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
 
@@ -191,7 +196,6 @@ public class RouteProperties {
         int hour = cal.get(Calendar.HOUR_OF_DAY);
         int min = cal.get(Calendar.MINUTE);
         float compTime = hour + (min/60);
-        // logic for if is running
 
         if(isSaturday){
             busesActive = (compTime >= 8.5) && compTime <= 20.25;
@@ -200,9 +204,6 @@ public class RouteProperties {
         }else{
             busesActive = compTime >= 7 && compTime <= 21.15;
         }
-    }
-
-    public boolean isBusesActive() {
         return busesActive;
     }
 
