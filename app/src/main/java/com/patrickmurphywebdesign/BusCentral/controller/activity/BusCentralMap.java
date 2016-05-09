@@ -33,6 +33,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.patrickmurphywebdesign.BusCentral.model.Bus;
 import com.patrickmurphywebdesign.BusCentral.model.BusStop;
 import com.patrickmurphywebdesign.BusCentral.controller.MapIcons;
 import com.patrickmurphywebdesign.BusCentral.R;
@@ -175,7 +176,44 @@ public class BusCentralMap extends FragmentActivity implements OnMapReadyCallbac
         }
     };
 
-    private void setConnectionStatusIndicator(boolean connected, boolean init){
+    public void updateBusView(int busID, Bus BusModel){
+        busUpdateCount++;
+
+        if (!busCollectionMap.containsKey(busID)) {
+            System.out.println("add bus " + busID);
+            Marker tempMark = mMap.addMarker(BusModel.getMarker(mapIcons));
+            busCollectionMap.put(busID, tempMark);
+        } else {
+            Marker thisBus = busCollectionMap.get(busID);
+            thisBus.setVisible(true);
+
+            if (!BusModel.getPosition().equals(thisBus.getPosition())) {
+                thisBus.setPosition(BusModel.getPosition());
+                thisBus.setIcon(mapIcons.getIcon_bus(BusModel.getHeading(), BusModel.getColor(), BusModel.getVelocity()));
+            }
+        }
+
+        // if 5th recieved data then update stop times
+        if (busUpdateCount % 5 == 0) {
+            for (BusStop bs : routeProperties.getStops()) {
+                BusStopSchedule tempBusStopSchedule = new BusStopSchedule(bs);
+                String snippetText;
+
+                if (bs.getIsTimed()) {
+                    if (tempBusStopSchedule.hasNextTime()) {
+                        snippetText = "Next stop: " + tempBusStopSchedule.getNextTime().getFormattedTime() + " Click for Full Schedule.";
+                    } else {
+                        snippetText = "";
+                    }
+                } else {
+                    snippetText = "Click for details";
+                }
+                stopCollection.get(bs.getName()).setSnippet("Next stop: " + tempBusStopSchedule.getNextTime().getFormattedTime() + " Click for Full Schedule.");
+            }
+        }
+    }
+
+    public void setConnectionStatusIndicator(boolean connected, boolean init){
         if(connected) {
             ImageView iv = (ImageView) findViewById(R.id.SocketConnectedImage);
             iv.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.socket_connected, null));
@@ -212,7 +250,7 @@ public class BusCentralMap extends FragmentActivity implements OnMapReadyCallbac
         }
     }
 
-    private void setConnectionStatusIndicator(boolean connected){
+    public void setConnectionStatusIndicator(boolean connected){
         this.setConnectionStatusIndicator(connected, false);
     }
 
@@ -229,7 +267,7 @@ public class BusCentralMap extends FragmentActivity implements OnMapReadyCallbac
 
     }
 
-    private void alertWindow(String Message){
+    public void alertWindow(String Message){
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
         builder1.setMessage(Message);
         builder1.setCancelable(false);
