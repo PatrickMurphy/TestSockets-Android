@@ -5,26 +5,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Manager;
-import com.github.nkzawa.socketio.client.Socket;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -33,148 +24,26 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.patrickmurphywebdesign.BusCentral.controller.SocketManager;
 import com.patrickmurphywebdesign.BusCentral.model.Bus;
 import com.patrickmurphywebdesign.BusCentral.model.BusStop;
 import com.patrickmurphywebdesign.BusCentral.controller.MapIcons;
 import com.patrickmurphywebdesign.BusCentral.R;
 import com.patrickmurphywebdesign.BusCentral.controller.RouteProperties;
 import com.patrickmurphywebdesign.BusCentral.model.BusStopSchedule;
-import com.patrickmurphywebdesign.BusCentral.model.StopTime;
 
-import org.json.JSONObject;
-
-import java.net.URISyntaxException;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class BusCentralMap extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
 
     private GoogleMap mMap;
-    private ArrayList<Marker> busCollection;
-    private ArrayList<Integer> busIDs;
     private HashMap<Integer, Marker> busCollectionMap;
     private HashMap<String, Marker> stopCollection;
     private RouteProperties routeProperties;
     private MapIcons mapIcons;
+    private SocketManager mSocket;
     private int busUpdateCount;
-
-    private Emitter.Listener onConnected = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            BusCentralMap.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    setConnectionStatusIndicator(true);
-                }
-            });
-        }
-    };
-
-    private Emitter.Listener onDisconnected = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            System.out.println("----- Disconnected -----");
-            BusCentralMap.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    setConnectionStatusIndicator(false);
-                }
-            });
-        }
-    };
-
-    private Emitter.Listener onReconnectAttempt = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            System.out.println("attempting to reconnect to socket io");
-        }
-    };
-
-
-    private Socket mSocket;
-    {
-        try {
-            mSocket = IO.socket("http://buscentral.herokuapp.com/");
-
-            mSocket.on(Socket.EVENT_CONNECT, onConnected)
-                    .on(Socket.EVENT_RECONNECT, onConnected)
-                    .on(Manager.EVENT_RECONNECT_ATTEMPT, onReconnectAttempt)
-                    .on(Socket.EVENT_DISCONNECT, onDisconnected);
-
-        } catch (URISyntaxException e) {
-            System.out.println("URI SYNTAX EXCEPTION");
-        }
-    }
-
-    private Emitter.Listener onBusLocationEvent = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            BusCentralMap.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    busUpdateCount++;
-                    try {
-                        JSONObject data = (JSONObject) args[0];
-                        // for each bus
-                        for (int i = 0; i < data.length(); i++) {
-                            // get new position etc
-                            int busID = data.names().getInt(i);
-                            JSONObject busJson = (JSONObject) data.get(data.names().get(i).toString());
-                            JSONObject coordinates = (JSONObject) busJson.get("coordinates");
-                            LatLng position = new LatLng(coordinates.getDouble("lat"), coordinates.getDouble("lng"));
-                            String name = busJson.get("name").toString();
-                            int velocity = busJson.getInt("velocity");
-                            int heading = busJson.getInt("heading");
-                            int timeAt = busJson.getInt("timeAt");
-                            String timestamp = busJson.getString("timestamp");
-
-                            if(!busIDs.contains(busID)){
-                                System.out.println("add bus " + busID);
-                                Marker tempBusMarker = mMap.addMarker(new MarkerOptions().flat(true).position(position).title(name).anchor(Float.parseFloat("0.5"), Float.parseFloat("0.5")).icon(mapIcons.getIcon_bus(heading, i, velocity)));
-                                busCollection.add(tempBusMarker);
-                                busIDs.add(busID);
-                                busCollectionMap.put(busID, tempBusMarker);
-                            }else {
-                                //Marker thisBus = busCollection.get(busIDs.indexOf(busID));
-                                Marker thisBus = busCollectionMap.get(busID);
-
-                                thisBus.setVisible(true);
-                                // if moved
-                                if (thisBus.getPosition().latitude != coordinates.getDouble("lat") || thisBus.getPosition().longitude != coordinates.getDouble("lng")) {
-                                    // find place on path
-                                    thisBus.setPosition(position);
-                                    thisBus.setIcon(mapIcons.getIcon_bus(heading,i, velocity));
-                                }
-                            }
-
-                        }
-                        if(busUpdateCount % 5 == 0){
-                            for(BusStop bs : routeProperties.getStops()){
-                                BusStopSchedule tempBusStopSchedule = new BusStopSchedule(bs);
-                                String snippetText;
-
-                                if(bs.getIsTimed()) {
-                                    if (tempBusStopSchedule.hasNextTime()) {
-                                        snippetText = "Next stop: " + tempBusStopSchedule.getNextTime().getFormattedTime() + " Click for Full Schedule.";
-                                    } else {
-                                        snippetText = "";
-                                    }
-                                }else{
-                                    snippetText = "Click for details";
-                                }
-                                stopCollection.get(bs.getName()).setSnippet("Next stop: "+tempBusStopSchedule.getNextTime().getFormattedTime()+" Click for Full Schedule.");
-                            }
-                        }
-                    } catch (Exception e) {
-                        //    return;
-                        System.out.println("error");
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
-    };
 
     public void updateBusView(int busID, Bus BusModel){
         busUpdateCount++;
@@ -300,12 +169,11 @@ public class BusCentralMap extends FragmentActivity implements OnMapReadyCallbac
 
         routeProperties = new RouteProperties();
         mapIcons = new MapIcons(this);
-        busCollection = new ArrayList<Marker>();
         busCollectionMap = new HashMap<>();
         stopCollection = new HashMap<>();
-        busIDs = new ArrayList<Integer>();
 
         setConnectionStatusIndicator(false, true);
+        mSocket = SocketManager.getInstance(this);
 
         if(routeProperties.isWeekend()){
             // alert about only one bus route and modified times
@@ -340,32 +208,19 @@ public class BusCentralMap extends FragmentActivity implements OnMapReadyCallbac
     protected void onRestart() {
         super.onRestart();
         checkConnectivity();
-        if(!mSocket.connected()) {
-            mSocket.off(Socket.EVENT_CONNECT);
-            mSocket.off(Socket.EVENT_RECONNECT_ATTEMPT);
-            mSocket.off(Socket.EVENT_RECONNECT);
-            mSocket.off(Socket.EVENT_DISCONNECT);
-            mSocket.on(Socket.EVENT_CONNECT, onConnected)
-                    .on(Socket.EVENT_RECONNECT, onConnected)
-                    .on(Manager.EVENT_RECONNECT_ATTEMPT, onReconnectAttempt)
-                    .on(Socket.EVENT_DISCONNECT, onDisconnected);
-            mSocket.connect();
-            mSocket.on("buses-location", onBusLocationEvent);
-        }
+        mSocket.reconnect();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         mSocket.disconnect();
-        mSocket.off("buses-location");
     }
 
     @Override
     public void onDestroy(){
         super.onDestroy();
         mSocket.disconnect();
-        mSocket.off("buses-location");
     }
 
     @Override
@@ -378,8 +233,6 @@ public class BusCentralMap extends FragmentActivity implements OnMapReadyCallbac
         mMap.getUiSettings().setCompassEnabled(false);
         mMap.getUiSettings().setTiltGesturesEnabled(false);
 
-        // Setup event handler for incoming gps coords
-        mSocket.on("buses-location", onBusLocationEvent);
         mSocket.connect();
 
         // add route
